@@ -16,8 +16,10 @@ return new class extends Migration
         Schema::create('sections', function (Blueprint $table) {
             $table->id();        
             $table->string('name');
+            $table->string('type')->nullable();
             $table->longText('data')->nullable();
-            $table->int('active')->default(0);
+            $table->integer('active')->default(0);
+            $table->integer('ordering')->default(0);
             $table->timestamps();
         });
     }

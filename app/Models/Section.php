@@ -11,6 +11,8 @@ class Section extends Model
         'name',
         'type',
         'data',
+        'active',
+        'ordering',
     ];
 
     protected $casts = [       
