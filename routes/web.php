@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,10 @@ Route::namespace('App\Http\Controllers')->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
    
     Route::get('/berita/{slug}', [HomeController::class, 'article'])->name('article');
+
+    Route::post('/berita/{slug}/komentar', [CommentController::class, 'store'])
+        ->name('article.comment.store')
+        ->middleware('throttle:5,1');
 
     Route::get('/program/{slug}', [HomeController::class, 'program'])->name('program');
 

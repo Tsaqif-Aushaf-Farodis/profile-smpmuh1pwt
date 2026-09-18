@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Comment;
 use App\Models\Section;
 use App\Models\Staff;
 use App\Models\Program;
@@ -92,11 +93,12 @@ class HomeController extends Controller
 
   
     public function article($slug)
-        {   
+        {
             $article = Post::where('slug', $slug)->first();
-            $categories = Category::withCount('posts')->get();           
+            $categories = Category::withCount('posts')->get();
+            $comments = Comment::approved()->where('post_id', $article->id)->latest()->get();
 
-            return view('article', compact('article', 'categories'));
+            return view('article', compact('article', 'categories', 'comments'));
         }
 
     
