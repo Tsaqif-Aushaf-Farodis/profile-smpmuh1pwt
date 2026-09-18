@@ -1,12 +1,7 @@
 <?php
 
 use Beier\FilamentPages\Filament\FilamentPageTemplates\DefaultTemplate;
-use Beier\FilamentPages\Filament\FilamentPageTemplates\ContactTemplate;
-use Beier\FilamentPages\Filament\FilamentPageTemplates\ProgramTemplate;
-use Beier\FilamentPages\Filament\FilamentPageTemplates\PrestasiTemplate;
-use Beier\FilamentPages\Filament\FilamentPageTemplates\StaffTemplate;
-use Beier\FilamentPages\Filament\FilamentPageTemplates\GaleriTemplate;
-use Beier\FilamentPages\Filament\FilamentPageTemplates\BeritaTemplate;
+use Beier\FilamentPages\Filament\FilamentPageTemplates\BlogTemplate;
 
 use Beier\FilamentPages\Filament\Resources\FilamentPageResource;
 use Beier\FilamentPages\Models\FilamentPage;
@@ -114,12 +109,7 @@ return [
     */
     'templates' => [
         DefaultTemplate::class,
-        ContactTemplate::class,
-        ProgramTemplate::class,
-        PrestasiTemplate::class,
-        StaffTemplate::class,
-        GaleriTemplate::class,
-        BeritaTemplate::class,
+        BlogTemplate::class,
     ],
 
     /*
