@@ -1,16 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 
+@php
+    $metaTitle = $metaTitle ?? 'SMP Muhammadiyah 1 Purwokerto';
+    $metaDescription = $metaDescription ?? 'SMP Muhammadiyah 1 Purwokerto';
+    $metaImage = $metaImage ?? asset('assets/images/logo.png');
+    $metaType = $metaType ?? 'website';
+    $metaUrl = $metaUrl ?? url()->current();
+@endphp
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SMP Muhammadiyah 1 Purwokerto</title>
+    <title>{{ $metaTitle }}</title>
     <!-- favicons Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/images/logo-single.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/images/logo-single.png') }}" />
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/images/logo-single.png') }}" />
     <link rel="manifest" href="assets/images/favicons/site.webmanifest" />
-    <meta name="description" content="SMP Muhammadiyah 1 Purwokerto" />
+    <meta name="description" content="{{ $metaDescription }}" />
+
+    <!-- Open Graph / WhatsApp, Facebook link preview -->
+    <meta property="og:type" content="{{ $metaType }}" />
+    <meta property="og:site_name" content="SMP Muhammadiyah 1 Purwokerto" />
+    <meta property="og:title" content="{{ $metaTitle }}" />
+    <meta property="og:description" content="{{ $metaDescription }}" />
+    <meta property="og:url" content="{{ $metaUrl }}" />
+    <meta property="og:image" content="{{ $metaImage }}" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ $metaTitle }}" />
+    <meta name="twitter:description" content="{{ $metaDescription }}" />
+    <meta name="twitter:image" content="{{ $metaImage }}" />
 
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
