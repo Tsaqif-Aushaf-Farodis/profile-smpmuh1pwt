@@ -68,6 +68,46 @@ Menambahkan tag Open Graph saja **tidak cukup** kalau kondisi berikut belum terp
 3. Tempel URL tersebut ke [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/) → klik "Scrape Again" → pastikan gambar, judul, dan deskripsi muncul benar.
 4. Bagikan link tersebut ke chat WhatsApp → thumbnail seharusnya muncul dalam beberapa detik.
 
+## 5b. Hasil Pengecekan di Server Production (2026-09-21) & Kenapa Thumbnail Masih Belum Muncul
+
+Dicek langsung terhadap `https://smpmuh1pwt.sch.id/berita/seni-melepaskan-kontrol-demi-kemandirian-anak-remaja` dengan meniru crawler WhatsApp/Facebook/Telegram:
+
+| Pemeriksaan | Hasil |
+|---|---|
+| Meta tag `og:title/description/url/image`, `twitter:*` | Ada dan benar (`APP_URL` sudah `https://smpmuh1pwt.sch.id`) |
+| `og:image` bisa diunduh (status, tipe) | 200, `image/jpeg` — untuk user-agent WhatsApp, facebookexternalhit, Facebot, TelegramBot |
+| Ukuran gambar | 1197x673 px, 240 KB (WhatsApp umumnya menolak gambar > ±300 KB) |
+| `robots.txt` | Terbuka (`Disallow:` kosong) |
+| Server memblokir bot | Tidak |
+| Nama file mengandung `=` (`...ZS5qcGc=-.jpg`) | Tetap bisa diakses, baik mentah maupun ter-encode (`%3D`) |
+
+**Kesimpulan:** sisi server sudah benar. Penyebab paling mungkin adalah **cache preview WhatsApp** — WhatsApp menyimpan hasil scrape per URL (di server mereka dan di aplikasi HP). Kalau URL itu pernah dibagikan sebelum tag Open Graph ada/ter-deploy, preview kosong yang lama terus dipakai.
+
+**Cara memaksa WhatsApp mengambil ulang:**
+1. Buka [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/), tempel URL berita, klik **Scrape Again** (butuh login Facebook). Pastikan gambar tampil di hasilnya.
+2. Uji ke chat/nomor yang belum pernah menerima link itu (cache lokal HP penerima juga bisa menahan preview lama), atau uji dengan artikel yang belum pernah dibagikan.
+3. Trik cepat untuk uji: tambahkan parameter di akhir URL, mis. `...-anak-remaja?v=2` (WhatsApp menganggapnya URL baru).
+
+**Penguatan yang ditambahkan:** tag `og:image:width`, `og:image:height`, dan `og:image:type` kini otomatis ikut ditulis (dihitung dari file banner artikel). Facebook/WhatsApp lebih andal menampilkan gambar pada share pertama jika dimensinya diberikan; tanpa itu, gambar kadang baru muncul di share kedua. Artikel tanpa banner (memakai logo cadangan) tidak menyertakan tag ini.
+
+Catatan tambahan: `http://` saat ini tidak di-redirect ke `https://` (keduanya mengembalikan 200). Sebaiknya aktifkan redirect HTTPS di server/`.htaccess` agar semua tautan satu versi.
+
+## 5c. Jam Komentar Tidak Sesuai WIB
+
+**Penyebab:** `config/app.php` memakai `'timezone' => 'UTC'` (default Laravel), sehingga semua waktu (`created_at`) disimpan dan ditampilkan dalam UTC — selisih 7 jam dari WIB (contoh: tampil 03:55, seharusnya 10:55 WIB).
+
+**Perbaikan:**
+- `config/app.php` → `'timezone' => 'Asia/Jakarta'` (berlaku untuk web publik, panel admin Filament, dan data baru).
+- Tampilan komentar di `article.blade.php` diberi label `WIB` agar jelas.
+
+**Setelah deploy ke server:** jalankan `php artisan config:clear` (atau `config:cache` ulang jika config di-cache di production) agar perubahan terbaca.
+
+**Data lama:** komentar yang dikirim *sebelum* perubahan ini tersimpan dalam UTC, sehingga di tampilan baru akan terlihat 7 jam lebih awal. Jika ingin dikoreksi, jalankan sekali di database production:
+```sql
+UPDATE comments SET created_at = created_at + INTERVAL 7 HOUR, updated_at = updated_at + INTERVAL 7 HOUR;
+```
+(jalankan **hanya sekali**; komentar baru setelah perubahan sudah benar dan tidak perlu dikoreksi — kalau ada komentar baru di production, batasi dengan `WHERE created_at < 'waktu-saat-deploy'`).
+
 ## 6. Catatan
 
 - Mekanisme meta tag dinamis ini (`$metaTitle`, `$metaDescription`, `$metaImage`, dst.) sengaja dibuat generik di `layout/header.blade.php`, jadi bisa dipakai ulang dengan mudah untuk halaman lain (Program, Prestasi, Halaman biasa) kalau nanti dibutuhkan preview yang lebih spesifik juga — saat ini baru diterapkan di halaman Berita sesuai permintaan.

@@ -27,6 +27,13 @@
     <meta property="og:description" content="{{ $metaDescription }}" />
     <meta property="og:url" content="{{ $metaUrl }}" />
     <meta property="og:image" content="{{ $metaImage }}" />
+    @if (!empty($metaImageWidth) && !empty($metaImageHeight))
+        <meta property="og:image:width" content="{{ $metaImageWidth }}" />
+        <meta property="og:image:height" content="{{ $metaImageHeight }}" />
+    @endif
+    @if (!empty($metaImageType))
+        <meta property="og:image:type" content="{{ $metaImageType }}" />
+    @endif
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />

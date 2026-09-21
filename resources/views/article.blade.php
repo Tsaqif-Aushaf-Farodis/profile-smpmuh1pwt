@@ -1,12 +1,17 @@
 @php
     $shareUrl = route('article', ['slug' => $article->slug]);
     $metaDescription = $article->excerpt ?: \Illuminate\Support\Str::limit(strip_tags($article->content), 155);
+    $bannerFile = $article->banner ? \Illuminate\Support\Facades\Storage::disk('public')->path($article->banner) : null;
+    $bannerInfo = $bannerFile && is_file($bannerFile) ? @getimagesize($bannerFile) : false;
 @endphp
 
 @include('layout.header', [
     'metaTitle' => $article->title . ' - SMP Muhammadiyah 1 Purwokerto',
     'metaDescription' => $metaDescription,
     'metaImage' => $article->banner_url ?: asset('assets/images/logo.png'),
+    'metaImageWidth' => $bannerInfo[0] ?? null,
+    'metaImageHeight' => $bannerInfo[1] ?? null,
+    'metaImageType' => $bannerInfo['mime'] ?? null,
     'metaType' => 'article',
     'metaUrl' => $shareUrl,
 ])
@@ -77,7 +82,7 @@
                           <div class="blog-details__comment__content">
                               <h3 class="blog-details__comment__name">{{ $comment->name }}</h3>
                               <div class="blog-details__meta__date" style="margin-bottom: 10px;">
-                                  <i class="icon-clock"></i>{{ $comment->created_at->format('d M Y, H:i') }}
+                                  <i class="icon-clock"></i>{{ $comment->created_at->format('d M Y, H:i') }} WIB
                               </div>
                               <p class="blog-details__comment__text">{{ $comment->content }}</p>
                           </div>
