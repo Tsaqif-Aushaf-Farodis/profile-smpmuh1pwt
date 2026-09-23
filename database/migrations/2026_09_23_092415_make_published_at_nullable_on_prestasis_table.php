@@ -14,7 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::table('prestasis', function (Blueprint $table) {
-            $table->dateTime('published_at')->nullable()->change();
+            if (Schema::hasColumn('prestasis', 'published_at')) {
+                $table->dateTime('published_at')->nullable()->change();
+            } else {
+                $table->dateTime('published_at')->nullable();
+            }
         });
     }
 
@@ -26,7 +30,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('prestasis', function (Blueprint $table) {
-            $table->dateTime('published_at')->nullable(false)->change();
+            if (Schema::hasColumn('prestasis', 'published_at')) {
+                $table->dateTime('published_at')->nullable(false)->change();
+            }
         });
     }
 };

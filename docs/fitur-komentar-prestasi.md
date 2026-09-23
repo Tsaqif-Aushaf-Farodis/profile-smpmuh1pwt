@@ -85,6 +85,8 @@ Saat membuat data uji coba, ditemukan bug pre-existing (tidak berkaitan dengan f
 
 Karena kolom ini juga tidak dipakai di query manapun (tidak ada logic publish-terjadwal yang membacanya), perbaikan paling aman adalah menjadikannya nullable lewat migration baru (`make_published_at_nullable_on_prestasis_table`), tanpa mengubah perilaku aplikasi. Setelah ini, membuat Prestasi baru dari panel admin berfungsi normal.
 
+**Update setelah deploy ke production (2026-09-23):** migrasi ini sempat gagal di server production dengan error `There is no column with name "published_at" on table "prestasis"`. Penyebabnya: tabel `prestasis` di production ternyata **tidak punya kolom `published_at` sama sekali** — kemungkinan besar migrasi `create_prestasis_table` sudah pernah dijalankan di server itu *sebelum* kolom `published_at`/`published_until` ditambahkan ke file migrasinya (Laravel hanya mencatat nama file migrasi yang sudah jalan, bukan isi/hash-nya, jadi perubahan pada file migration lama tidak otomatis diterapkan ke database yang migration-nya sudah pernah dijalankan). Migrasi perbaikan ini sudah dibuat lebih aman: cek dulu apakah kolomnya ada (`Schema::hasColumn`) — kalau ada, diubah jadi nullable; kalau belum ada sama sekali, langsung ditambahkan sebagai kolom nullable. Dengan begini migrasi ini aman dijalankan baik di database yang skemanya lengkap (lokal) maupun yang skemanya "ketinggalan" seperti production.
+
 ## 11. Status
 
 Diimplementasikan dan diverifikasi end-to-end pada 2026-09-23 (submit komentar → tersimpan pending → admin approve via toggle di `PrestasiCommentResource` → tampil publik dengan jam WIB yang benar).
