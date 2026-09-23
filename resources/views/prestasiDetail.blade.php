@@ -1,4 +1,21 @@
-@include('layout.header');
+@php
+    $shareUrl = route('prestasi', ['slug' => $detail->slug]);
+    $metaDescription = \Illuminate\Support\Str::limit(strip_tags($detail->data['content']['detail'] ?? ''), 155);
+    $bannerPath = $detail->data['content']['image'] ?? null;
+    $bannerFile = $bannerPath ? \Illuminate\Support\Facades\Storage::disk('public')->path($bannerPath) : null;
+    $bannerInfo = $bannerFile && is_file($bannerFile) ? @getimagesize($bannerFile) : false;
+@endphp
+
+@include('layout.header', [
+    'metaTitle' => $detail->title . ' - SMP Muhammadiyah 1 Purwokerto',
+    'metaDescription' => $metaDescription,
+    'metaImage' => $bannerPath ? asset('storage/' . $bannerPath) : asset('assets/images/logo.png'),
+    'metaImageWidth' => $bannerInfo[0] ?? null,
+    'metaImageHeight' => $bannerInfo[1] ?? null,
+    'metaImageType' => $bannerInfo['mime'] ?? null,
+    'metaType' => 'article',
+    'metaUrl' => $shareUrl,
+])
 
 <section class="page-header page-header--bg-two" data-jarallax data-speed="0.3" data-imgPosition="50% -100%">
   <div class="page-header__bg jarallax-img"></div><!-- /.page-header-bg -->
@@ -31,6 +48,8 @@
                     {!! $detail->data['content']['detail'] !!}
                   </p>
               </div><!-- details-content -->
+
+              @include('partials.share-buttons', ['shareTitle' => $detail->title, 'shareUrl' => $shareUrl])
 
               <div class="blog-details__comment" id="komentar">
                   <h3 class="blog-details__comment__title">Komentar ({{ $comments->count() }})</h3>
@@ -92,3 +111,5 @@
 <!-- Blog End -->
 
 @include('layout.footer');
+
+@include('partials.share-scripts')

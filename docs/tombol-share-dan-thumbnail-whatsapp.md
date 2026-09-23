@@ -1,9 +1,21 @@
-# Tombol Share & Thumbnail Preview WhatsApp di Halaman Berita
+# Tombol Share & Thumbnail Preview WhatsApp di Halaman Berita & Prestasi
 
 ## 1. Apa yang Ditambahkan
 
-1. **Tombol share** di halaman detail berita (`resources/views/article.blade.php`), setelah bagian Tags: WhatsApp, Facebook, Twitter/X, dan tombol "Salin Tautan".
-2. **Meta tag Open Graph & Twitter Card** yang dinamis per halaman (judul, deskripsi, gambar artikel), agar saat link berita dibagikan ke WhatsApp/Facebook/Telegram, muncul kartu preview lengkap dengan thumbnail, judul, dan cuplikan teks — bukan cuma link polos.
+1. **Tombol share** di halaman detail berita (`resources/views/article.blade.php`) dan halaman detail prestasi (`resources/views/prestasiDetail.blade.php`): WhatsApp, Facebook, Twitter/X, dan tombol "Salin Tautan".
+2. **Meta tag Open Graph & Twitter Card** yang dinamis per halaman (judul, deskripsi, gambar) di kedua halaman tersebut, agar saat link dibagikan ke WhatsApp/Facebook/Telegram, muncul kartu preview lengkap dengan thumbnail, judul, dan cuplikan teks — bukan cuma link polos.
+
+## 1b. Update 2026-09-23: Diperluas ke Halaman Prestasi + Dijadikan Reusable
+
+Fitur yang tadinya hanya ada di halaman Berita sekarang diterapkan juga di halaman Prestasi, dengan cara yang sama persis (meta tag OG dinamis termasuk `og:image:width/height/type` dari gambar prestasi, dan 4 tombol share yang sama).
+
+Supaya tidak duplikasi kode antara dua halaman (dan kalau nanti ditambah lagi di halaman lain jadi lebih gampang), tombol share dan script/CSS-nya dipecah jadi **partial Blade yang reusable**:
+- `resources/views/partials/share-buttons.blade.php` — menerima `$shareTitle` dan `$shareUrl`, dipanggil lewat `@include('partials.share-buttons', [...])`.
+- `resources/views/partials/share-scripts.blade.php` — berisi CSS `.blog-details__share*` dan fungsi JS `shareCopyLink()`, dipanggil sekali lewat `@include('partials.share-scripts')` di bagian bawah tiap halaman yang pakai tombol share.
+
+`article.blade.php` yang sebelumnya punya kode share ter-inline sudah di-refactor untuk memakai partial yang sama, supaya kalau ada perbaikan (mis. bug tombol copy-link di HTTP yang pernah diperbaiki sebelumnya) cukup diubah di satu tempat dan otomatis berlaku untuk semua halaman yang pakai.
+
+Untuk Prestasi, karena tidak ada field `excerpt` terpisah (beda dengan Post/Berita), deskripsi `og:description` diambil otomatis dari 155 karakter pertama isi field "Detail" prestasi (tag HTML dibuang). Gambar `og:image` diambil dari field gambar prestasi (`data.content.image`); kalau prestasi belum punya gambar, fallback ke logo sekolah — sama seperti mekanisme di halaman Berita.
 
 ## 2. Kenapa Thumbnail WhatsApp Sebelumnya Tidak Muncul
 
