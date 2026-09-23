@@ -8,6 +8,7 @@ use App\Models\Section;
 use App\Models\Staff;
 use App\Models\Program;
 use App\Models\Prestasi;
+use App\Models\PrestasiComment;
 use App\Models\Galeri;
 use Beier\FilamentPages\Models\FilamentPage;
 use Stephenjude\FilamentBlog\Models\Post;
@@ -113,11 +114,11 @@ class HomeController extends Controller
   
     public function prestasi($slug)
         {
-          
+
             $detail = Prestasi::where('slug', $slug)->firstOrFail();
-        
-    
-            return view('prestasiDetail', compact('detail'));
+            $comments = PrestasiComment::approved()->where('prestasi_id', $detail->id)->latest()->get();
+
+            return view('prestasiDetail', compact('detail', 'comments'));
         }
   
    

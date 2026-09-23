@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\PrestasiCommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,10 @@ Route::namespace('App\Http\Controllers')->group(function () {
     Route::get('/program/{slug}', [HomeController::class, 'program'])->name('program');
 
     Route::get('/prestasi/{slug}', [HomeController::class, 'prestasi'])->name('prestasi');
+
+    Route::post('/prestasi/{slug}/komentar', [PrestasiCommentController::class, 'store'])
+        ->name('prestasi.comment.store')
+        ->middleware('throttle:5,1');
 
     Route::get('/{slug}', [HomeController::class, 'page'])->name('page');
 

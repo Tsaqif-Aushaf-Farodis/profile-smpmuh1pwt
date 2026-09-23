@@ -2,25 +2,25 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CommentResource\Pages;
-use App\Models\Comment;
+use App\Filament\Resources\PrestasiCommentResource\Pages;
+use App\Models\PrestasiComment;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
 
-class CommentResource extends Resource
+class PrestasiCommentResource extends Resource
 {
-    protected static ?string $model = Comment::class;
+    protected static ?string $model = PrestasiComment::class;
 
-    protected static ?string $slug = 'comments';
+    protected static ?string $slug = 'prestasi-comments';
 
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $navigationGroup = 'Blog';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 71;
 
-    protected static ?string $navigationLabel = 'Komentar Berita';
+    protected static ?string $navigationLabel = 'Komentar Prestasi';
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-alt-2';
 
@@ -33,8 +33,8 @@ class CommentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('post.title')
-                    ->label('Artikel')
+                Tables\Columns\TextColumn::make('prestasi.title')
+                    ->label('Prestasi')
                     ->limit(40)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
@@ -65,7 +65,7 @@ class CommentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListComments::route('/'),
+            'index' => Pages\ListPrestasiComments::route('/'),
         ];
     }
 }

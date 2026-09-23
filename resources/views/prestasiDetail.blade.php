@@ -28,11 +28,63 @@
                   </div><!-- /.details-meta -->
                   <h3 class="blog-details__title">{{ $detail->title }}</h3><!-- details-tiele -->
                   <p class="blog-details__text">
-                    {!! $detail->data['content']['detail'] !!} 
-                  </p>             
+                    {!! $detail->data['content']['detail'] !!}
+                  </p>
               </div><!-- details-content -->
-            
-      
+
+              <div class="blog-details__comment" id="komentar">
+                  <h3 class="blog-details__comment__title">Komentar ({{ $comments->count() }})</h3>
+
+                  @forelse ($comments as $comment)
+                      <div class="blog-details__comment__item" style="padding-left: 0;">
+                          <div class="blog-details__comment__content">
+                              <h3 class="blog-details__comment__name">{{ $comment->name }}</h3>
+                              <div class="blog-details__meta__date" style="margin-bottom: 10px;">
+                                  <i class="icon-clock"></i>{{ $comment->created_at->format('d M Y, H:i') }} WIB
+                              </div>
+                              <p class="blog-details__comment__text">{{ $comment->content }}</p>
+                          </div>
+                      </div>
+                  @empty
+                      <p>Belum ada komentar. Jadilah yang pertama berkomentar!</p>
+                  @endforelse
+              </div><!-- details-comment -->
+
+              <div class="blog-details__comment-form">
+                  <h3 class="blog-details__comment-form__title">Tinggalkan Komentar</h3>
+
+                  @if (session('comment_status'))
+                      <p style="color: var(--eduact-secondary); font-weight: 600;">{{ session('comment_status') }}</p>
+                  @endif
+
+                  <form action="{{ route('prestasi.comment.store', ['slug' => $detail->slug]) }}" method="POST">
+                      @csrf
+                      <div class="row">
+                          <div class="col-lg-12">
+                              <div class="blog-details__comment-form__input-box">
+                                  <input type="text" name="name" placeholder="Nama Anda" value="{{ old('name') }}" required>
+                                  @error('name')
+                                      <small style="color: red;">{{ $message }}</small>
+                                  @enderror
+                              </div>
+                          </div>
+                          <div class="col-lg-12">
+                              <div class="blog-details__comment-form__input-box">
+                                  <textarea name="content" placeholder="Tulis komentar Anda" required>{{ old('content') }}</textarea>
+                                  @error('content')
+                                      <small style="color: red;">{{ $message }}</small>
+                                  @enderror
+                              </div>
+                          </div>
+                          <div style="position: absolute; left: -9999px;" aria-hidden="true">
+                              <label>Website</label>
+                              <input type="text" name="website" tabindex="-1" autocomplete="off">
+                          </div>
+                      </div>
+                      <button type="submit" class="eduact-btn"><span class="eduact-btn__curve"></span>Kirim Komentar<i class="icon-arrow"></i></button>
+                  </form>
+              </div><!-- details-comment-form -->
+
           </div>
       </div>
   </div>
